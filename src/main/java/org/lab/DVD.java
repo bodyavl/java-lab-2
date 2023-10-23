@@ -1,12 +1,10 @@
 package org.lab;
 
-public class Book extends Item {
-    public String author;
-
-
-    public Book(String uuid, String title, String author) {
+public class DVD extends Item{
+    public int duration;
+    public DVD(String uuid, String title, int duration) {
         super(uuid, title);
-        this.author = author;
+        this.duration = duration;
     }
 
     @Override

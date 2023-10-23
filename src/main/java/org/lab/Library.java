@@ -2,33 +2,71 @@ package org.lab;
 
 import java.util.ArrayList;
 
-public class Library {
-    private final ArrayList<Book> books;
+public class Library implements IManageable {
+    private final ArrayList<Item> items;
+
+    private final ArrayList<Patron> patrons;
 
     public Library() {
-        books = new ArrayList<Book>();
+        items = new ArrayList<Item>();
+        patrons = new ArrayList<Patron>();
     }
 
-    public Book AddBook(Book book) {
-        books.add(book);
-        return book;
+    public ArrayList<Item> getItems() {
+        return items;
     }
-    public Book RemoveBookByISBN(long isbn) {
-        for(Book book : books) {
-            if(book.ISBN == isbn) {
-                books.remove(book);
-                return book;
+
+    public ArrayList<Patron> getPatrons() {
+        return patrons;
+    }
+
+    @Override
+    public void add(Item item) {
+        items.add(item);
+    }
+
+    @Override
+    public void remove(String uuid) {
+        for (Item item : items) {
+            if (item.uuid.equals(uuid)) {
+                items.remove(item);
+                break;
             }
         }
-        return null;
     }
-    public ArrayList<Book> ShowBooks() {
-        return books;
-    }
-    public Book GetBookByTitle(String title) {
-        for (Book book : books) {
-            if (book.title.equals(title)) return book;
+
+    @Override
+    public ArrayList<Item> listAvailable() {
+        ArrayList<Item> availableItems = new ArrayList<Item>();
+        for (Item item : items) {
+            if (!item.isBorrowed) {
+                availableItems.add(item);
+            }
         }
-        return null;
+        return availableItems;
     }
+
+    @Override
+    public ArrayList<Item> listBorrowed() {
+        ArrayList<Item> borrowedItems = new ArrayList<Item>();
+        for (Item item : items) {
+            if (item.isBorrowed) {
+                borrowedItems.add(item);
+            }
+        }
+        return borrowedItems;
+    }
+
+    public void registerPatron(Patron patron) {
+        patrons.add(patron);
+    }
+
+    public void lendItem(Patron patron, Item item) {
+        patron.borrowItem(item);
+    }
+
+    public void returnItem(Patron patron, Item item) {
+        patron.returnItem(item);
+    }
+
 }
