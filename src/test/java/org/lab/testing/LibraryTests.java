@@ -1,8 +1,7 @@
 package org.lab.testing;
 
 import org.junit.jupiter.api.*;
-import org.lab.Book;
-import org.lab.Library;
+import org.lab.*;
 
 import java.util.ArrayList;
 
@@ -10,36 +9,61 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class LibraryTests {
-    private static final Library library = new Library();
-    private static final Book mockBook = new Book("title", "author", 0, 0);
+    Library library;
 
-    @Test
-
-    public void testAddBook() {
-        Book book = library.AddBook(mockBook);
-        assertEquals(mockBook, book);
+    @BeforeEach
+    public void init() {
+        library = new Library();
     }
 
     @Test
-
-    public void testGetBookByTitle() {
-        Book book = library.GetBookByTitle(mockBook.title);
-        assertEquals(mockBook, book);
+    public void testAddItem() {
+        library.add(new Book("1234", "The Hobbit", "J.R.R. Tolkien"));
+        assertEquals(library.getItems().size(), 1);
     }
 
     @Test
-
-    public void testShowBooks() {
-        ArrayList<Book> books = library.ShowBooks();
-        if(!books.contains(mockBook))
-            throw new AssertionError("Book should be in library");
+    public void testRemoveItem() {
+        Book book = new Book("1234", "The Hobbit", "J.R.R. Tolkien");
+        library.add(book);
+        library.remove(book.uuid);
+        assertEquals(library.getItems().size(), 0);
     }
 
     @Test
-
-    public void testRemoveBookByISBN() {
-        var book = library.RemoveBookByISBN(mockBook.ISBN);
-        if(library.ShowBooks().contains(mockBook))
-            throw new AssertionError("Book should be removed from library");
+    public void testRegisterPatron() {
+        library.registerPatron(new Patron("1234", "John"));
+        assertEquals(library.getPatrons().size(), 1);
     }
+
+    @Test
+    public void testListAvailable() {
+        DVD dvd = new DVD("1234", "The Hobbit", 500);
+        library.add(dvd);
+        ArrayList<Item> availableItems = library.listAvailable();
+        assertEquals(availableItems.size(), 1);
+    }
+
+    @Test
+    public void testLendItem() {
+        Book book = new Book("1234", "The Hobbit", "J.R.R. Tolkien");
+        Patron patron = new Patron("1234", "John");
+        library.registerPatron(patron);
+        library.add(book);
+        library.lendItem(patron, book);
+        assertEquals(library.listAvailable().size(), 0);
+        assertEquals(library.listBorrowed().size(), 1);
+    }
+
+    @Test
+    public void testReturnItem() {
+        Book book = new Book("1234", "The Hobbit", "J.R.R. Tolkien");
+        Patron patron = new Patron("1234", "John");
+        library.registerPatron(patron);
+        library.add(book);
+        library.lendItem(patron, book);
+        library.returnItem(patron, book);
+        assertEquals(library.listBorrowed().size(), 0);
+    }
+
 }

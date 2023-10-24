@@ -8,15 +8,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BookTests {
 
     @Test
-    public void testCreateBook () {
-        final String title = "title";
-        final String author = "author";
-        final long ISBN = 0;
-        final int releaseYear = 0;
-        Book book = new Book(title, author, ISBN, releaseYear);
-        assertEquals(book.title, title,"book.title should equal 'title'");
-        assertEquals(book.author, author,"book.author should equal 'author'");
-        assertEquals(book.ISBN, ISBN,"book.ISBN should equal 'ISBN'");
-        assertEquals(book.releaseYear, releaseYear,"book.releaseYear should equal 'releaseYear'");
+    public void testBookConstructor() {
+        Book book = new Book("1234", "The Hobbit", "J.R.R. Tolkien");
+        assertEquals("1234", book.uuid);
+        assertEquals("The Hobbit", book.title);
+        assertEquals("J.R.R. Tolkien", book.author);
     }
+
+    @Test
+    public void testBookBorrow() {
+        Book book = new Book("1234", "The Hobbit", "J.R.R. Tolkien");
+        book.borrowItem();
+        assertEquals(true, book.isBorrowed);
+    }
+
+    @Test
+    public void testBookReturn() {
+        Book book = new Book("1234", "The Hobbit", "J.R.R. Tolkien");
+        book.returnItem();
+        assertEquals(false, book.isBorrowed);
+    }
+
 }
